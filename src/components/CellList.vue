@@ -1,8 +1,8 @@
 <template>
-    <g transform="translate(0, 40)">
+    <g transform="translate(0, 80)">
         <g v-for="item in cellList" v-bind:key="item.cellId">
             <rect width="30" height="30" stroke="black" v-bind:fill="(item.isOpened ? '#fff' : '#ccc')" stroke-width="1" @click="onCellClick(item.cellId, $event)" v-bind:x="item.x" v-bind:y="item.y" />
-            <text pointer-events="none" v-bind:x="item.x + 10" v-bind:y="item.y + 20">{{ item.value }}</text>
+            <text pointer-events="none" v-bind:x="item.x + 10" v-bind:y="item.y + 20" v-bind:fill="item.color">{{ item.value }}</text>
         </g>
     </g>
 </template>
@@ -15,6 +15,7 @@ interface CellViewItem extends CellItem {
     x: number;
     y: number;
     value: string;
+    color: string;
 }
 
 @Component
@@ -29,6 +30,7 @@ export default class CellList extends Vue {
                 x: cellItem.position.col * 30,
                 y: cellItem.position.row * 30,
                 value: this.getCellValue(cellItem, isGameOver),
+                color: this.getCellColor(cellItem),
             }, cellItem));
         }
 
@@ -37,6 +39,37 @@ export default class CellList extends Vue {
 
     public onCellClick(cellId: number, e: any) {
         this.$store.dispatch('openCell', cellId);
+    }
+
+    private getCellColor(cellItem: CellItem) {
+        let value = '';
+        if (cellItem.isOpened) {
+            if (cellItem.hasMine) {
+                value = 'red';
+            } else {
+                switch (cellItem.contacts) {
+                    case 1:
+                        value = '#090';
+                        break;
+                    case 2:
+                        value = '#f66';
+                        break;
+                    case 3:
+                        value = '#c33';
+                        break;
+                    case 4:
+                        value = '#600';
+                        break;
+                    case 5:
+                        value = '#300';
+                        break;
+                    default:
+                        value = '#fff';
+                }
+            }
+        }
+
+        return value;
     }
 
     private getCellValue(cellItem: CellItem, isGameOver: boolean) {

@@ -21,6 +21,10 @@ export interface CellItem {
 interface State {
   cells: { [index: number]: CellItem; };
   isGameOver: boolean;
+  hasWon: boolean;
+  maxMineNum: number;
+  maxRowNum: number;
+  maxColNum: number;
 }
 
 function generateMineCellList(maxRowNum: number, maxColNum: number, maxMineNum: number) {
@@ -133,7 +137,11 @@ export default new Vuex.Store({
   state: {
     cells: {},
     isGameOver: false,
-  } as State,
+    hasWon: false,
+    maxRowNum: 9,
+    maxColNum: 9,
+    maxMineNum: 10,
+} as State,
   getters: {
     getCellMap: (state, getters) => () => {
       return state.cells;
@@ -141,18 +149,18 @@ export default new Vuex.Store({
     isGameOver: (state, getters) => () => {
       return state.isGameOver;
     },
+    hasWon: (state, getters) => () => {
+      return state.hasWon;
+    },
   },
   mutations: {
     generateCells(state, payload) {
-      const maxRowNum = 9;
-      const maxColNum = 9;
-      const maxMineNum = 10;
-      const mineCellList = generateMineCellList(maxRowNum, maxColNum, maxMineNum);
+      const mineCellList = generateMineCellList(state.maxRowNum, state.maxColNum, state.maxMineNum);
 
       const cellMap: { [index: number]: CellItem; } = {};
       let newCellId = 1;
-      for (let row = 0; row < maxRowNum; row++) {
-        for (let col = 0; col < maxColNum; col++) {
+      for (let row = 0; row < state.maxRowNum; row++) {
+        for (let col = 0; col < state.maxColNum; col++) {
           const cellItem: CellItem = {
             cellId: newCellId,
             position: {row, col},
@@ -171,6 +179,9 @@ export default new Vuex.Store({
     setGameOver(state, payload) {
       state.isGameOver = payload.isGameOver;
     },
+    setHasWon(state, payload) {
+      state.hasWon = payload.hasWon;
+    },
     openCell(state, payload) {
       state.cells[payload.cellId].isOpened = true;
     },
@@ -185,6 +196,9 @@ export default new Vuex.Store({
     resetGame(context) {
       context.commit('setGameOver', {
         isGameOver: false,
+      });
+      context.commit('setHasWon', {
+        hasWon: false,
       });
       context.commit('generateCells');
     },
@@ -207,6 +221,16 @@ export default new Vuex.Store({
           context.commit('openCell', {
             cellId: bulkOpenCellId,
           });
+        }
+
+        const closedCellCount = _.sumBy(
+          _.values(context.state.cells), (cellItem: CellItem) => cellItem.isOpened ? 0 : 1,
+        );
+        if (context.state.maxMineNum === closedCellCount) {
+          context.commit('setHasWon', {
+            hasWon: true,
+          });
+          context.dispatch('gameOver');
         }
       }
     },
