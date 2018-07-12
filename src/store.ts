@@ -1,12 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import _ from 'lodash';
+
 Vue.use(Vuex);
+
+export interface Position {
+  row: number;
+  col: number;
+}
 
 export interface CellItem {
   cellId: number;
-  row: number;
-  col: number;
+  position: Position;
   isOpened: boolean;
   contacts: number;
   hasMine: boolean;
@@ -41,40 +47,86 @@ function generateMineCellList(maxRowNum: number, maxColNum: number, maxMineNum: 
   return mineCellList;
 }
 
-function calcMineContactNum(row: number, col: number, mineCellList: boolean[][]): number {
+function getSurroundingCellPositions(position: Position): Position[] {
+  return [
+    {row: position.row - 1, col: position.col - 1},
+    {row: position.row - 1, col: position.col},
+    {row: position.row - 1, col: position.col + 1},
+    {row: position.row, col: position.col - 1},
+    {row: position.row, col: position.col + 1},
+    {row: position.row + 1, col: position.col - 1},
+    {row: position.row + 1, col: position.col},
+    {row: position.row + 1, col: position.col + 1},
+  ];
+}
+
+function getSurroundingCells(
+  targetCell: CellItem, cellList: CellItem[]): CellItem[] {
+  const surroundingCellPositionList: Position[] = getSurroundingCellPositions(targetCell.position);
+
+  const surroundingCellList: CellItem[] = [];
+  for (const cellItem of cellList) {
+    if (surroundingCellPositionList.some((position: Position) => {
+      return _.isEqual(position, cellItem.position);
+    })) {
+      surroundingCellList.push(cellItem);
+    }
+  }
+
+  return surroundingCellList;
+}
+
+function calcMineContactNum(position: Position, mineCellList: boolean[][]): number {
   let contactNum = 0;
-
-  if (row > 0) {
-    if (col > 0 && mineCellList[row - 1][col - 1]) {
+  if (position.row > 0) {
+    if (position.col > 0 && mineCellList[position.row - 1][position.col - 1]) {
       contactNum++;
     }
-    if (mineCellList[row - 1][col]) {
+    if (mineCellList[position.row - 1][position.col]) {
       contactNum++;
     }
-    if (col < mineCellList[row - 1].length - 1 && mineCellList[row - 1][col + 1]) {
+    if (position.col < mineCellList[position.row - 1].length - 1 && mineCellList[position.row - 1][position.col + 1]) {
       contactNum++;
     }
   }
 
-  if (col > 0 && mineCellList[row][col - 1]) {
+  if (position.col > 0 && mineCellList[position.row][position.col - 1]) {
     contactNum++;
   }
-  if (col < mineCellList[row].length && mineCellList[row][col + 1]) {
+  if (position.col < mineCellList[position.row].length && mineCellList[position.row][position.col + 1]) {
     contactNum++;
   }
 
-  if (row < mineCellList.length - 1) {
-    if (col > 0 && mineCellList[row + 1][col - 1]) {
+  if (position.row < mineCellList.length - 1) {
+    if (position.col > 0 && mineCellList[position.row + 1][position.col - 1]) {
       contactNum++;
     }
-    if (mineCellList[row + 1][col]) {
+    if (mineCellList[position.row + 1][position.col]) {
       contactNum++;
     }
-    if (col < mineCellList[row + 1].length - 1 && mineCellList[row + 1][col + 1]) {
+    if (position.col < mineCellList[position.row + 1].length - 1 && mineCellList[position.row + 1][position.col + 1]) {
       contactNum++;
     }
   }
   return contactNum;
+}
+
+function getCellIdsForBulkOpen(targetCell: CellItem, cells: {[index: number]: CellItem}): number[] {
+  if (targetCell.contacts > 0) {
+    return [];
+  }
+
+  let openingCellIdList: number[] = [];
+  const surroundingCells: CellItem[] = getSurroundingCells(targetCell, _.values(cells));
+  openingCellIdList = _.union(openingCellIdList, surroundingCells.map((ci: CellItem) => ci.cellId));
+
+  const zeroContactCells = surroundingCells.filter((ci: CellItem) => ci.contacts === 0);
+  for (const zeroContactCellItem of zeroContactCells) {
+    openingCellIdList = _.union(openingCellIdList,
+      getCellIdsForBulkOpen(zeroContactCellItem, _.omit(cells, openingCellIdList, targetCell.cellId)));
+  }
+
+  return openingCellIdList;
 }
 
 export default new Vuex.Store({
@@ -103,10 +155,9 @@ export default new Vuex.Store({
         for (let col = 0; col < maxColNum; col++) {
           const cellItem: CellItem = {
             cellId: newCellId,
-            row,
-            col,
+            position: {row, col},
             isOpened: false,
-            contacts: calcMineContactNum(row, col, mineCellList),
+            contacts: calcMineContactNum({row, col}, mineCellList),
             hasMine: mineCellList[row][col],
           };
 
@@ -150,6 +201,13 @@ export default new Vuex.Store({
         context.commit('openCell', {
           cellId,
         });
+
+        const bulkOpenCellIdList = getCellIdsForBulkOpen(context.state.cells[cellId], context.state.cells);
+        for (const bulkOpenCellId of bulkOpenCellIdList) {
+          context.commit('openCell', {
+            cellId: bulkOpenCellId,
+          });
+        }
       }
     },
   },

@@ -26,8 +26,8 @@ export default class CellList extends Vue {
         for (const cellId in cellMap) {
             const cellItem = cellMap[cellId];
             cellViewList.push(Object.assign({
-                x: cellItem.col * 30,
-                y: cellItem.row * 30,
+                x: cellItem.position.col * 30,
+                y: cellItem.position.row * 30,
                 value: this.getCellValue(cellItem, isGameOver),
             }, cellItem));
         }
