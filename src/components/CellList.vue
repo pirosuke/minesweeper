@@ -1,8 +1,8 @@
 <template>
-    <g transform="translate(0, 80)">
+    <g transform="translate(1, 80)">
         <g v-for="item in cellList" v-bind:key="item.cellId">
-            <rect width="30" height="30" stroke="black" v-bind:fill="(item.isOpened ? '#fff' : '#ccc')" stroke-width="1" @click="onCellClick(item.cellId, $event)" v-bind:x="item.x" v-bind:y="item.y" />
-            <text pointer-events="none" v-bind:x="item.x + 10" v-bind:y="item.y + 20" v-bind:fill="item.color">{{ item.value }}</text>
+            <rect width="50" height="50" stroke="black" v-bind:fill="(item.isOpened ? (item.hasMine ? '#fcc' : '#fff') : 'url(#cellGrad)')" stroke-width="1" @click="onCellClick(item.cellId, $event)" v-bind:x="item.x" v-bind:y="item.y" />
+            <text pointer-events="none" font-weight="bold" v-bind:x="item.x + 20" v-bind:y="item.y + 30" v-bind:fill="item.color">{{ item.value }}</text>
         </g>
     </g>
 </template>
@@ -27,8 +27,8 @@ export default class CellList extends Vue {
         for (const cellId in cellMap) {
             const cellItem = cellMap[cellId];
             cellViewList.push(Object.assign({
-                x: cellItem.position.col * 30,
-                y: cellItem.position.row * 30,
+                x: cellItem.position.col * 50,
+                y: cellItem.position.row * 50,
                 value: this.getCellValue(cellItem, isGameOver),
                 color: this.getCellColor(cellItem),
             }, cellItem));

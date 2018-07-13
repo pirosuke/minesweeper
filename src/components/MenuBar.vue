@@ -1,18 +1,18 @@
 <template>
-    <g>
-        <g>
-            <rect width="270" height="30" x="0" y="0" stroke="black" fill="#ccc" stroke-width="1" @click="onResetClick" />
-            <text pointer-events="none" x="5" y="20">さいしょからやりなおし</text>
-        </g>
-        <g transform="translate(0, 40)" v-if="isGameOver">
+    <g transform="translate(1, 1)">
+        <g v-if="isGameOver">
             <g v-if="hasWon">
-                <rect width="270" height="30" x="0" y="0" stroke="blue" fill="#fff" stroke-width="1" @click="onResetClick" />
-                <text pointer-events="none" x="5" y="20" stroke="none" fill="blue">あなたのかち！</text>
+                <rect width="450" height="40" x="0" y="0" stroke="blue" fill="#fff" stroke-width="4" />
+                <text pointer-events="none" x="5" y="25" stroke="none" fill="blue">ぜんぶあけた！あなたのかち！</text>
             </g>
             <g v-else>
-                <rect width="270" height="30" x="0" y="0" stroke="red" fill="#fff" stroke-width="1" @click="onResetClick" />
-                <text pointer-events="none" x="5" y="20" stroke="none" fill="red">あなたのまけ！</text>
+                <rect width="450" height="40" x="0" y="0" stroke="red" fill="#fff" stroke-width="4" />
+                <text pointer-events="none" x="5" y="25" stroke="none" fill="red">ざんねん！おとしあなだ！</text>
             </g>
+        </g>
+        <g v-else>
+            <rect width="450" height="40" x="0" y="0" stroke="none" fill="#fff" stroke-width="1" />
+            <text pointer-events="none" x="5" y="25" stroke="none">「おとしあな」におちないようにマスをあけてみよう</text>
         </g>
     </g>
 </template>
@@ -22,10 +22,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class MenuBar extends Vue {
-    public onResetClick(e: any) {
-        this.$store.dispatch('resetGame');
-    }
-
     get hasWon() {
         return this.$store.getters.hasWon();
     }
