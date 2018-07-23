@@ -1,7 +1,7 @@
 <template>
-    <g transform="translate(1, 80)">
+    <g transform="translate(1, 90)">
         <g v-for="item in cellList" v-bind:key="item.cellId">
-            <rect width="50" height="50" stroke="black" v-bind:fill="(item.isOpened ? (item.hasMine ? '#fcc' : '#fff') : 'url(#cellGrad)')" stroke-width="1" @click="onCellClick(item.cellId, $event)" v-bind:x="item.x" v-bind:y="item.y" />
+            <rect width="50" height="50" stroke="#ccc" v-bind:fill="(item.isOpened ? (item.hasMine ? '#c51162' : '#fff') : '#6200ee')" stroke-width="1" @click="onCellClick(item.cellId, $event)" v-bind:x="item.x" v-bind:y="item.y" />
             <text pointer-events="none" font-weight="bold" v-bind:x="item.x + 20" v-bind:y="item.y + 30" v-bind:fill="item.color">{{ item.value }}</text>
         </g>
     </g>
@@ -45,7 +45,7 @@ export default class CellList extends Vue {
         let value = '';
         if (cellItem.isOpened) {
             if (cellItem.hasMine) {
-                value = 'red';
+                value = 'white';
             } else {
                 switch (cellItem.contacts) {
                     case 1:

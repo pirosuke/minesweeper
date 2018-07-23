@@ -1,11 +1,23 @@
 <template>
   <svg id="app" width="500px" height="600px">
-    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#eee" />
-        <stop offset="50%" stop-color="#ccc" />
-        <stop offset="51%" stop-color="#bbb" />
-        <stop offset="100%" stop-color="#999" />
-    </linearGradient>
+    <defs>
+      <filter id="shadow" width="100" height="100">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
+        <feOffset dx="1" dy="3" result="offsetBlur" />
+        <feMerge>
+          <feMergeNode />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="small-shadow" width="100" height="100">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
+        <feOffset dx="0" dy="1" result="offsetBlur" />
+        <feMerge>
+          <feMergeNode />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
     <linearGradient id="cellGrad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stop-color="#feb" />
         <stop offset="100%" stop-color="#fd9" />
