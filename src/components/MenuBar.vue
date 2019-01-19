@@ -4,16 +4,16 @@
             <g v-if="isGameOver">
                 <g v-if="hasWon">
                     <rect width="450" height="40" x="0" y="0" stroke="none" fill="#3700b3" />
-                    <text pointer-events="none" x="225" y="25" stroke="none" fill="#fff" text-anchor="middle">ぜんぶあけた！あなたのかち！</text>
+                    <text pointer-events="none" x="225" y="25" stroke="none" fill="#fff" text-anchor="middle">{{ $t('you_win') }}</text>
                 </g>
                 <g v-else>
                     <rect width="450" height="40" x="0" y="0" stroke="none" fill="#c51162" stroke-width="4" />
-                    <text pointer-events="none" x="225" y="25" stroke="none" fill="#fff" text-anchor="middle">ざんねん！おとしあなだ！</text>
+                    <text pointer-events="none" x="225" y="25" stroke="none" fill="#fff" text-anchor="middle">{{ $t('you_lose') }}</text>
                 </g>
             </g>
             <g v-else>
                 <rect width="450" height="40" x="0" y="0" stroke="none" fill="#fff" stroke-width="1" />
-                <text pointer-events="none" x="225" y="25" stroke="none" text-anchor="middle">「おとしあな」におちないようにマスをあけてみよう</text>
+                <text pointer-events="none" x="225" y="25" stroke="none" text-anchor="middle">{{ $t('start_message') }}</text>
             </g>
         </g>
         <g transform="translate(0, 45)">
@@ -53,3 +53,18 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>
+
+<i18n>
+{
+  "en": {
+    "start_message": "Click And Open Cells. Watch Out For Mines!",
+    "you_win": "You Win!",
+    "you_lose": "You Lose!"
+  },
+  "ja": {
+    "start_message": "「おとしあな」におちないようにマスをあけてみよう",
+    "you_win": "ぜんぶあけた！あなたのかちです！",
+    "you_lose": "ざんねん！おとしあなだ！"
+  }
+}
+</i18n>
