@@ -25,27 +25,28 @@
     </g>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script>
+import { mapGetters, mapState } from 'vuex'
 
-@Component
-export default class MenuBar extends Vue {
-    get hasWon() {
+export default {
+  computed: {
+    hasWon() {
         return this.$store.getters.hasWon();
-    }
+    },
 
-    get isGameOver() {
+    isGameOver() {
         return this.$store.getters.isGameOver();
-    }
+    },
 
-    get mineNum() {
+    mineNum() {
         return this.$store.getters.getMaxMineNum();
-    }
+    },
 
-    get remainingOpenableCellNum() {
+    remainingOpenableCellNum() {
         const remainingNum = this.$store.getters.getRemainingOpenableCellNum();
         return remainingNum >= 0 ? remainingNum : 0;
     }
+  }
 }
 </script>
 

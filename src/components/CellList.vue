@@ -7,23 +7,19 @@
     </g>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { CellItem } from '../store';
+<script>
+import { mapGetters, mapState } from 'vuex'
 
-interface CellViewItem extends CellItem {
-    x: number;
-    y: number;
-    value: string;
-    color: string;
-}
-
-@Component
-export default class CellList extends Vue {
-    get cellList() {
+export default {
+  created () {
+  },
+  computed: {
+    ...mapGetters({
+    }),
+    cellList: function () {
         const cellMap = this.$store.getters.getCellMap();
         const isGameOver = this.$store.getters.isGameOver();
-        const cellViewList: CellViewItem[] = [];
+        const cellViewList = [];
         for (const cellId in cellMap) {
             const cellItem = cellMap[cellId];
             cellViewList.push(Object.assign({
@@ -36,12 +32,13 @@ export default class CellList extends Vue {
 
         return cellViewList;
     }
-
-    public onCellClick(cellId: number, e: any) {
+  },
+  methods: {
+    onCellClick(cellId, e) {
         this.$store.dispatch('openCell', cellId);
-    }
+    },
 
-    private getCellColor(cellItem: CellItem) {
+    getCellColor(cellItem) {
         let value = '';
         if (cellItem.isOpened) {
             if (cellItem.hasMine) {
@@ -70,25 +67,27 @@ export default class CellList extends Vue {
         }
 
         return value;
-    }
+    },
 
-    private getCellValue(cellItem: CellItem, isGameOver: boolean) {
+    getCellValue(cellItem, isGameOver) {
         let value = '';
         if (isGameOver) {
             if (cellItem.hasMine) {
                 value = 'x';
             } else {
-                value = cellItem.contacts.toString();
+                value = cellItem.contacts;
             }
         } else {
             if (cellItem.isOpened) {
-                value = cellItem.contacts.toString();
+                value = cellItem.contacts;
             }
         }
 
         return value;
     }
+  }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

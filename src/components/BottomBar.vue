@@ -7,14 +7,15 @@
     </g>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script>
+import { mapGetters, mapState } from 'vuex'
 
-@Component
-export default class BottomBar extends Vue {
-    public onResetClick(e: any) {
+export default {
+  methods: {
+    onResetClick(e) {
         this.$store.dispatch('resetGame');
     }
+  }
 }
 </script>
 

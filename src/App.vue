@@ -28,21 +28,19 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script>
 import CellList from './components/CellList.vue';
 import MenuBar from './components/MenuBar.vue';
 import BottomBar from './components/BottomBar.vue';
 
-@Component({
+export default {
+  name: 'app',
   components: {
     CellList,
     MenuBar,
     BottomBar,
   },
-})
-export default class App extends Vue {
-  public created() {
+  created() {
     this.$store.dispatch('resetGame');
   }
 }
