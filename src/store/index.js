@@ -108,24 +108,24 @@ export default new Vuex.Store({
     maxMineNum: 10,
   },
   getters: {
-    getCellMap: (state, getters) => () => {
+    getCellMap: (state) => () => {
       return state.cells;
     },
-    isGameOver: (state, getters) => () => {
+    isGameOver: (state) => () => {
       return state.isGameOver;
     },
-    hasWon: (state, getters) => () => {
+    hasWon: (state) => () => {
       return state.hasWon;
     },
-    getMaxMineNum: (state, getters) => () => {
+    getMaxMineNum: (state) => () => {
       return state.maxMineNum;
     },
-    getRemainingOpenableCellNum: (state, getters) => () => {
+    getRemainingOpenableCellNum: (state) => () => {
       return _.values(state.cells).filter((ci) => !ci.isOpened).length - state.maxMineNum;
     },
   },
   mutations: {
-    generateCells(state, payload) {
+    generateCells(state) {
       const mineCellList = generateMineCellList(state.maxRowNum, state.maxColNum, state.maxMineNum);
       const cellMap = {};
       let newCellId = 1;
@@ -153,7 +153,7 @@ export default new Vuex.Store({
     openCell(state, payload) {
       state.cells[payload.cellId].isOpened = true;
     },
-    openAll(state, payload) {
+    openAll(state) {
       for (const cellId in state.cells) {
         const cellItem = state.cells[cellId];
         cellItem.isOpened = true;
@@ -199,5 +199,7 @@ export default new Vuex.Store({
         }
       }
     },
+  },
+  modules: {
   }
 })
